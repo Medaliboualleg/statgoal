@@ -1,0 +1,54 @@
+{
+  "name": "StatGoal — نتائج وإحصائيات كرة القدم",
+  "short_name": "StatGoal",
+  "description": "نتائج المباريات، الترتيب، إحصائيات اللاعبين والفرق والمنتخبات، وتحليلات Opta.",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#001D39",
+  "theme_color": "#001D39",
+  "categories": [
+    "sports",
+    "news"
+  ],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "مباريات اليوم",
+      "url": "/"
+    },
+    {
+      "name": "البطولات",
+      "url": "/competitions"
+    },
+    {
+      "name": "المنتخبات",
+      "url": "/national"
+    }
+  ]
+}

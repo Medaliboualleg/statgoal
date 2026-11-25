@@ -1,0 +1,9 @@
+node_modules
+dist
+.env
+.cache.json
+server/data
+*.log
+*.apk
+web/android/local.properties
+web/.env.mobile

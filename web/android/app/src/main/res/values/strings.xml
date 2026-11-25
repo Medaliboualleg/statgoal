@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">StatGoal</string>
+    <string name="title_activity_main">StatGoal</string>
+    <string name="package_name">com.statgoal.app</string>
+    <string name="custom_url_scheme">com.statgoal.app</string>
+</resources>

@@ -1,0 +1,26 @@
+{
+  "appId": "com.statgoal.app",
+  "appName": "StatGoal",
+  "webDir": "dist",
+  "backgroundColor": "#001D39",
+  "android": {
+    "allowMixedContent": true
+  },
+  "ios": {
+    "contentInset": "never",
+    "backgroundColor": "#001D39"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 900,
+      "backgroundColor": "#001D39",
+      "showSpinner": false,
+      "androidScaleType": "CENTER_INSIDE"
+    },
+    "StatusBar": {
+      "style": "DARK",
+      "backgroundColor": "#001D39",
+      "overlaysWebView": false
+    }
+  }
+}
