@@ -10,6 +10,7 @@ import National from './pages/National.jsx';
 import Search from './pages/Search.jsx';
 import SourcesPage from './pages/Sources.jsx';
 import Match from './pages/Match.jsx';
+import AppBar from './components/AppBar.jsx';
 
 const NAV = [
   ['/', 'المباريات', 'M4 6h16M4 12h16M4 18h10'],
@@ -30,6 +31,7 @@ export default function App() {
 
   return (
     <div className="app">
+      <AppBar />
       <header className="topbar">
         <div className="wrap topbar-in">
           <NavLink to="/" className="brand" aria-label="StatGoal"><Logo /></NavLink>
@@ -63,6 +65,7 @@ export default function App() {
           <Logo size={26} />
           <p>معطيات مدمجة من TheSportsDB وfootball-data.org، وتحليلات من The Analyst (Opta). كل رقم يحمل اسم مصدره.</p>
           <NavLink to="/sources">المصادر وحالتها</NavLink>
+          <a href="https://github.com/Medaliboualleg/statgoal" target="_blank" rel="noreferrer" dir="ltr">GitHub</a>
         </div>
       </footer>
 

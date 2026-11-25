@@ -49,3 +49,8 @@ npm run dev:web         # الواجهة على http://localhost:5180
 3. **Android:** ثبّت Android Studio (يأتي بـ JDK وAndroid SDK)، ثم `npm --prefix web run android` لفتح المشروع وتشغيله على هاتف أو محاكي، أو `npm --prefix web run apk` لبناء `web/android/app/build/outputs/apk/debug/app-debug.apk`. للنشر على Google Play: Build → Generate Signed Bundle في Android Studio.
 4. **iOS:** يتطلب جهاز Mac مع Xcode (قيد من Apple). انسخ المجلد إلى الـ Mac، ثم `npm --prefix web install` و`npm --prefix web run ios`، وشغّل من Xcode. النشر على App Store يتطلب حساب Apple Developer.
 5. **الأيقونات وشاشة البداية:** مصادرها في `web/assets/`؛ بعد تعديلها: `npm --prefix web run icons`. (الأداة تعيد كتابة `public/manifest.webmanifest`؛ أرجع قائمة `icons` بعدها.)
+
+## الربط بـ GitHub
+
+- **شريط التحميل أعلى الموقع** يقرأ آخر إصدار من `github.com/Medaliboualleg/statgoal` (عبر `/api/app-release`، مخزّن 15 دقيقة)، فزر Android يحمّل الـ APK المرفق بأحدث إصدار تلقائيًا. لتغيير المستودع: `GITHUB_REPO` في `.env`.
+- **بناء التطبيق على GitHub:** `.github/workflows/android-release.yml` يبني الـ APK ويرفقه بإصدار عند دفع وسم مثل `v0.2.0-beta` (`git tag v0.2.0-beta` ثم `git push origin v0.2.0-beta`)، أو يدويًا من تبويب Actions. اضبط متغيّر المستودع `STATGOAL_API_BASE` على عنوان خادمك المنشور.

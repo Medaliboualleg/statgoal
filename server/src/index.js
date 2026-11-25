@@ -9,6 +9,7 @@ import { theAnalyst } from './sources/theAnalyst.js';
 import { mergeMatches, mergeTables, sameTeam } from './merge.js';
 import { background } from './cache.js';
 import * as embeds from './embeds.js';
+import { latestRelease } from './sources/github.js';
 
 const app = express();
 const PORT = Number(process.env.PORT) || 4100;
@@ -183,7 +184,9 @@ api.post('/embeds/:kind/:id', validKind, admin, express.json({ limit: '20kb' }),
 api.delete('/embeds/:kind/:id/:index', validKind, admin, (req, res) => res.json(embeds.remove(req.params.kind, req.params.id, req.params.index)));
 api.get('/admin/check', admin, (_req, res) => res.json({ ok: true }));
 
-api.get('/articles',wrap(async (_req, res) => res.json(await theAnalyst.latest(undefined, 9))));
+api.get('/app-release', wrap(async (_req, res) => res.json(await latestRelease())));
+
+api.get('/articles', wrap(async (_req, res) => res.json(await theAnalyst.latest(undefined, 9))));
 
 // CORS for the Android/iOS apps (Capacitor origins) and any origin listed in CORS_ORIGINS.
 const ALLOWED = new Set(['https://localhost', 'http://localhost', 'capacitor://localhost', 'ionic://localhost',
