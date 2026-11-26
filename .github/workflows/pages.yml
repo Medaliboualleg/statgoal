@@ -1,0 +1,81 @@
+# Demo site on GitHub Pages: runs the StatGoal API on the runner, saves its answers as JSON
+# (server/scripts/snapshot.js) and publishes the static site with them.
+# Runs on every push to main, once a day, or by hand from the Actions tab (about an hour: the
+# free TheSportsDB key is rate-limited).
+#
+# Optional repository secret FOOTBALL_DATA_KEY (Settings → Secrets and variables → Actions)
+# adds full standings, top scorers and live scores; without it the demo uses TheSportsDB + Opta only.
+name: Demo site (GitHub Pages)
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '17 5 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            server/package-lock.json
+            web/package-lock.json
+
+      - name: Install
+        run: |
+          npm ci --prefix server
+          npm ci --prefix web
+
+      - name: Start StatGoal API (snapshot mode)
+        working-directory: server
+        env:
+          FOOTBALL_DATA_KEY: ${{ secrets.FOOTBALL_DATA_KEY }}
+          SETTLE_MS: '120000'
+          NO_WARM: '1'
+        run: nohup node src/index.js > ../api.log 2>&1 &
+
+      - name: Snapshot data
+        run: node server/scripts/snapshot.js web/public/data
+
+      - name: Build demo site
+        env:
+          VITE_STATIC: '1'
+          VITE_BASE: /${{ github.event.repository.name }}/
+        run: |
+          npm run build --prefix web
+          cp web/dist/index.html web/dist/404.html
+
+      - name: API log
+        if: always()
+        run: tail -n 40 api.log || true
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
