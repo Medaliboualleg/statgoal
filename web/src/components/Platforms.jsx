@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { API } from '../api.js';
+import { API, STATIC, api } from '../api.js';
 
 // The StatGoal way to browse other platforms: every item gets one-click jumps to the same item
 // on each platform (opened in the visitor's own browser), plus any official embed widget the
@@ -41,7 +41,7 @@ export default function PlatformHub({ kind, id, query, title = 'تصفّح ال�
 
   useEffect(() => {
     let alive = true;
-    fetch(`${API}/embeds/${kind}/${id}`).then((r) => r.json()).then((d) => alive && Array.isArray(d) && setEmbeds(d)).catch(() => {});
+    api(`/embeds/${kind}/${id}`).then((d) => alive && Array.isArray(d) && setEmbeds(d)).catch(() => {});
     return () => { alive = false; };
   }, [kind, id]);
 
@@ -83,7 +83,7 @@ export default function PlatformHub({ kind, id, query, title = 'تصفّح ال�
     <section className="section hub">
       <header className="section-head">
         <h2>{title}</h2>
-        <button className="linkbtn" onClick={() => setEditing((v) => !v)}>{editing ? 'إغلاق' : 'ربط أداة رسمية'}</button>
+        {!STATIC && <button className="linkbtn" onClick={() => setEditing((v) => !v)}>{editing ? 'إغلاق' : 'ربط أداة رسمية'}</button>}
       </header>
 
       <p className="hub-lead">افتح «<b dir="ltr">{query}</b>» مباشرة في:</p>

@@ -5,9 +5,15 @@ const memo = new Map();
 // Web: same origin. Android/iOS app: the server address set in `.env.mobile` (VITE_API_BASE).
 export const API = `${import.meta.env.VITE_API_BASE ?? ''}/api`;
 
+// GitHub Pages demo (VITE_STATIC=1): answers are JSON snapshots saved by server/scripts/snapshot.js.
+export const STATIC = import.meta.env.VITE_STATIC === '1';
+export const STATIC_MISSING = 'STATIC_MISSING';
+const staticFile = (p) => `${import.meta.env.BASE_URL}data/${p.replace(/^\//, '').replace(/[^\w.-]+/g, '_')}.json`;
+
 export async function api(path) {
   if (memo.has(path) && Date.now() - memo.get(path).at < 60_000) return memo.get(path).data;
-  const res = await fetch(`${API}${path}`);
+  const res = await fetch(STATIC ? staticFile(path) : `${API}${path}`);
+  if (STATIC && !res.ok) throw new Error(STATIC_MISSING);
   if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || `HTTP ${res.status}`);
   const data = await res.json();
   memo.set(path, { data, at: Date.now() });

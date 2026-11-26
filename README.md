@@ -54,3 +54,9 @@ npm run dev:web         # الواجهة على http://localhost:5180
 
 - **شريط التحميل أعلى الموقع** يقرأ آخر إصدار من `github.com/Medaliboualleg/statgoal` (عبر `/api/app-release`، مخزّن 15 دقيقة)، فزر Android يحمّل الـ APK المرفق بأحدث إصدار تلقائيًا. لتغيير المستودع: `GITHUB_REPO` في `.env`.
 - **بناء التطبيق على GitHub:** `.github/workflows/android-release.yml` يبني الـ APK ويرفقه بإصدار عند دفع وسم مثل `v0.2.0-beta` (`git tag v0.2.0-beta` ثم `git push origin v0.2.0-beta`)، أو يدويًا من تبويب Actions. اضبط متغيّر المستودع `STATGOAL_API_BASE` على عنوان خادمك المنشور.
+
+## الموقع التجريبي على GitHub Pages
+
+`.github/workflows/pages.yml` يشغّل خادم StatGoal على GitHub، ويحفظ إجاباته ملفات JSON (`server/scripts/snapshot.js`)، وينشر الموقع ثابتًا على `https://medaliboualleg.github.io/statgoal/`. يعمل عند كل دفع إلى `main` ومرة يوميًا ويدويًا من Actions (حوالي ساعة بسبب حدّ الطلبات المجاني). الصفحات المتوفرة: المباريات (±4 أيام)، البطولات، المنتخبات، وصفحات الفرق والمباريات الأبرز؛ البحث الحي وصفحات اللاعبين تتطلب الخادم الكامل. أضف السرّ `FOOTBALL_DATA_KEY` في إعدادات المستودع لترتيب كامل وهدّافين.
+
+تجربة محليًا: `node server/scripts/snapshot.js web/public/data http://localhost:4100`، ثم البناء بـ `VITE_STATIC=1 VITE_BASE=/statgoal/`، ثم `node web/scripts/serve-demo.mjs`.

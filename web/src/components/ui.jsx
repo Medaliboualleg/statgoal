@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom';
-import { fmtTime, fmtShort, SOURCE_LABEL } from '../api.js';
+import { fmtTime, fmtShort, SOURCE_LABEL, STATIC_MISSING } from '../api.js';
 
 export function Logo({ size = 34 }) {
   return (
     <span className="logo">
-      <img src="/icon.svg" width={size} height={size} alt="" />
+      <img src={`${import.meta.env.BASE_URL}icon.svg`} width={size} height={size} alt="" />
       <span className="logo-word" dir="ltr">Stat<b>Goal</b></span>
     </span>
   );
@@ -30,6 +30,14 @@ export function Loader({ label = 'جارٍ جلب البيانات من المص
 }
 
 export function ErrorBox({ error }) {
+  if (error?.message === STATIC_MISSING) {
+    return (
+      <div className="notice">
+        هذه الصفحة غير متوفرة في النسخة التجريبية على GitHub، فهي تعرض لقطة محفوظة من البيانات وليس الخادم الكامل.
+        حمّل التطبيق أو شغّل الخادم لتصفّح كل الفرق واللاعبين والبحث.
+      </div>
+    );
+  }
   return <div className="error-box">تعذّر تحميل البيانات: {error?.message}</div>;
 }
 

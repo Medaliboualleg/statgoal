@@ -7,3 +7,4 @@ server/data
 *.apk
 web/android/local.properties
 web/.env.mobile
+web/public/data

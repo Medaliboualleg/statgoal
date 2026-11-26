@@ -16,7 +16,7 @@ const PORT = Number(process.env.PORT) || 4100;
 
 // Settled: never let one source's failure break a page; report it in `notes` instead.
 // Also capped in time: a slow source is reported as loading and keeps filling the cache.
-async function settle(label, promise, fallback, notes, ms = 8000) {
+async function settle(label, promise, fallback, notes, ms = Number(process.env.SETTLE_MS) || 8000) {
   let timer;
   const late = new Promise((r) => { timer = setTimeout(() => { notes.push(`${label}: قيد التحميل، حدّث الصفحة بعد قليل`); r(fallback); }, ms); });
   try {
@@ -52,7 +52,7 @@ api.get('/matches', wrap(async (req, res) => {
   const notes = [];
   // Answer within a few seconds; slower sources keep filling the cache for the next visit.
   let pending = 0;
-  const soon = (p) => Promise.race([p, new Promise((r) => setTimeout(() => { pending++; r([]); }, 6000))]);
+  const soon = (p) => Promise.race([p, new Promise((r) => setTimeout(() => { pending++; r([]); }, Number(process.env.SETTLE_MS) || 6000))]);
   const [a, rounds, b] = await Promise.all([
     soon(settle('TheSportsDB', theSportsDb.matchesOn(date), [], notes)),
     Promise.all(COMPETITIONS.map((c) => soon(settle('TheSportsDB', theSportsDb.aroundNow(c), [], notes)))),
@@ -220,6 +220,8 @@ const warm = () => background(async () => {
 
 app.listen(PORT, () => {
   console.log(`StatGoal API on http://localhost:${PORT}`);
-  warm();
-  setInterval(warm, 20 * 60 * 1000);
+  if (!process.env.NO_WARM) {
+    warm();
+    setInterval(warm, 20 * 60 * 1000);
+  }
 });

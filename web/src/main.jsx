@@ -9,7 +9,7 @@ import { StatusBar, Style } from '@capacitor/status-bar';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
       <App />
     </BrowserRouter>
   </StrictMode>,
@@ -23,6 +23,6 @@ if (native) {
   StatusBar.setStyle({ style: Style.Dark }).catch(() => {});
   StatusBar.setBackgroundColor({ color: '#001D39' }).catch(() => {});
   CapApp.addListener('backButton', ({ canGoBack }) => (canGoBack ? window.history.back() : CapApp.exitApp()));
-} else if ('serviceWorker' in navigator && import.meta.env.PROD) {
+} else if ('serviceWorker' in navigator && import.meta.env.PROD && import.meta.env.VITE_STATIC !== '1') {
   window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
 }
