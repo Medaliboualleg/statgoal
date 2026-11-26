@@ -1,0 +1,75 @@
+# Builds the StatGoal Android APK on GitHub and attaches it to a release.
+# Trigger: push a tag like v0.2.0 (or v0.2.0-beta), or run it by hand from the Actions tab.
+# The site's download bar always offers the APK of the newest release, so nothing else to update.
+#
+# Set the repository variable STATGOAL_API_BASE (Settings → Secrets and variables → Actions →
+# Variables) to the public HTTPS address of your StatGoal server, e.g. https://api.statgoal.com
+name: Android release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to create or update (e.g. v0.2.0-beta)'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ github.event.inputs.tag || github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Install web dependencies
+        working-directory: web
+        run: npm ci
+
+      - name: API address for the app
+        working-directory: web
+        run: |
+          if [ -z "${{ vars.STATGOAL_API_BASE }}" ]; then
+            echo "::warning::STATGOAL_API_BASE is not set; the app will have no server to talk to."
+          fi
+          echo "VITE_API_BASE=${{ vars.STATGOAL_API_BASE }}" > .env.mobile
+
+      - name: Build web bundle and sync Android project
+        working-directory: web
+        run: |
+          npm run build:mobile
+          npx cap sync android
+
+      - name: Build APK
+        working-directory: web/android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+          cp app/build/outputs/apk/debug/app-debug.apk "$GITHUB_WORKSPACE/StatGoal.apk"
+
+      - name: Publish to GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PRE=""
+          case "$TAG" in *-*) PRE="--prerelease" ;; esac
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" StatGoal.apk --clobber
+          else
+            gh release create "$TAG" StatGoal.apk $PRE --title "StatGoal ${TAG#v}" --generate-notes --target "$GITHUB_SHA"
+          fi
